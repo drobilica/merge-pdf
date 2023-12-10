@@ -1,0 +1,29 @@
+name: Copy merge-pdf to drobilica.github.io
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  copy_merge_pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout merge-pdf repository
+        uses: actions/checkout@v2
+        with:
+          repository: drobilica/merge-pdf
+
+      - name: Copy merge-pdf contents to drobilica.github.io
+        run: |
+          mkdir -p merge-pdf
+          cp -r * merge-pdf/
+          cd merge-pdf
+
+          git init
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Copy merge-pdf contents"
+          git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/drobilica/drobilica.github.io.git" main:merge-pdf
