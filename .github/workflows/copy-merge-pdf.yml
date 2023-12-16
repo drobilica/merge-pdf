@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+env:
+  TARGET_REPO: drobilica/drobilica.github.io
+  TARGET_PATH: drobilica-homepage
+  TARGET_FOLDER: merge-pdf
+
 jobs:
   copy_merge_pdf:
     runs-on: ubuntu-latest
@@ -13,26 +18,27 @@ jobs:
       - name: Checkout merge-pdf repository
         uses: actions/checkout@v4
         with:
-          repository: drobilica/merge-pdf
+          repository: ${{ github.repository }}
           ref: main
 
       - name: Sync Folder to Repository B
         uses: actions/checkout@v4
         with:
-          repository: drobilica/drobilica.github.io
+          repository: ${{ env.TARGET_REPO }}
           token: ${{ secrets.drobilica_access }}
-          path: drobilica-homepage
+          path: ${{ env.TARGET_PATH }}
 
       - name: Copy Files
         run: |
-          mkdir -p drobilica-homepage/merge-pdf
+          mkdir -p ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}
+          rm -rf ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}/*
           shopt -s extglob # Enable extended globbing
-          cp -R !(drobilica-homepage) drobilica-homepage/merge-pdf
+          cp -R !(drobilica-homepage) ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}
           shopt -u extglob # Disable extended globbing
 
       - name: Copy merge-pdf contents to drobilica.github.io
         run: |
-          cd drobilica-homepage
+          cd ${{ env.TARGET_PATH }}
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
