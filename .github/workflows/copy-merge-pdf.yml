@@ -14,16 +14,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: drobilica/merge-pdf
+          ref: main
+
+      - name: Sync Folder to Repository B
+        uses: actions/checkout@v4
+        with:
+          repository: drobilica/drobilica.github.io
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: drobilica-homepage
+
+      - name: Copy Files
+        run: |
+          mkdir -p drobilica-homepage
+          cp -r * drobilica-homepage/
+          cp -R * drobilica-homepage/pdf-merge/
 
       - name: Copy merge-pdf contents to drobilica.github.io
         run: |
-          mkdir -p merge-pdf
-          cp -r * merge-pdf/
-          cd merge-pdf
-
-          git init
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          cd drobilica-homepage
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add .
-          git commit -m "Copy merge-pdf contents"
-          git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/drobilica/drobilica.github.io.git" main:merge-pdf
+          git commit -m "Update from PDF-merge"
+          git push
