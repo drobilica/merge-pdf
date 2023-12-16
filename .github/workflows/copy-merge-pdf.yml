@@ -33,7 +33,7 @@ jobs:
           mkdir -p ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}
           rm -rf ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}/*
           shopt -s extglob # Enable extended globbing
-          cp -R !(drobilica-homepage) ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}
+          cp -R !( "${{ env.TARGET_PATH }}" ) ${{ env.TARGET_PATH }}/${{ env.TARGET_FOLDER }}
           shopt -u extglob # Disable extended globbing
 
       - name: Copy merge-pdf contents to drobilica.github.io
