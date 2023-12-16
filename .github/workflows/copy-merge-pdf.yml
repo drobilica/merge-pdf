@@ -25,9 +25,8 @@ jobs:
 
       - name: Copy Files
         run: |
-          mkdir -p drobilica-homepage
-          cp -r * drobilica-homepage/
-          cp -R * drobilica-homepage/pdf-merge/
+          mkdir -p drobilica-homepage/merge-pdf
+          cp -R ./* drobilica-homepage/merge-pdf
 
       - name: Copy merge-pdf contents to drobilica.github.io
         run: |
