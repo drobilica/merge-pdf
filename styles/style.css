@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    padding-top: 50px;
+}
+#upload-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    cursor: pointer;
+    /* width: 300px; */
+    text-align: center;
+}
+.ui.segment {
+    max-width: 600px; /* Adjust this width to match the upload area */
+    margin: auto; /* Center align the segments */
+}
+
+/* Adjustments for the filename input to prevent cropping */
+#filename-input {
+    width: calc(100% - 20px); /* Adjusts the width to fit within the segment */
+}
+
+/* Optional: To ensure consistent spacing between segments */
+.ui.segment + .ui.segment {
+    margin-top: 10px;
+}

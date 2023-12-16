@@ -4,93 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Merge Tool</title>
-    <script src="https://unpkg.com/pdf-lib"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 50px;
-        }
-
-        #upload-area {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            cursor: pointer;
-        }
-
-        #progress-bar {
-            width: 0%;
-            height: 20px;
-            background-color: green;
-            margin-top: 10px;
-            display: none;
-        }
-    </style>
+    <!-- Semantic UI CSS -->
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="lib/pdf-lib.min.js"></script>
 </head>
 <body>
-    <div id="upload-area">Drag and drop PDF files here or click to select files</div>
-    <div id="progress-bar"></div>
-    <input type="file" id="file-input" multiple accept="application/pdf" style="display: none;" />
-    <script>
-        const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('file-input');
-        const progressBar = document.getElementById('progress-bar');
+    <!-- File Upload Area -->
+    <div id="upload-area" class="ui segment">
+        <h2 class="ui center aligned icon header">
+            <i class="circular file pdf outline icon"></i>
+            Drag and drop PDF files here or click to select files
+        </h2>
+        <input type="file" id="file-input" multiple accept="application/pdf" class="ui fluid button" />
+    </div>
 
-        uploadArea.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFiles);
-        uploadArea.addEventListener('dragover', (event) => event.preventDefault());
-        uploadArea.addEventListener('drop', (event) => {
-            event.preventDefault();
-            fileInput.files = event.dataTransfer.files;
-            handleFiles();
-        });
+    <!-- Filename Input -->
+    <div class="ui segment">
+        <label for="filename-input" class="ui label">
+            <i class="file alternate icon"></i>
+            Output Filename:
+        </label>
+        <div class="ui input fluid">
+            <input type="text" id="filename-input" placeholder="Enter filename (optional)">
+        </div>
+    </div>
 
-        async function handleFiles() {
-            const files = Array.from(fileInput.files);
-            if (!files.every(file => file.type === 'application/pdf')) {
-                alert('Please upload only PDF files.');
-                return;
-            }
+    <!-- Progress Bar -->
+    <div class="ui segment">
+        <label class="ui label">
+            <i class="sync alternate icon"></i>
+            Merge Progress:
+        </label>
+        <div id="progress-bar" class="ui active progress">
+            <div class="bar"><div class="progress"></div></div>
+        </div>
+    </div>
 
-            progressBar.style.display = 'block';
-            progressBar.style.width = '0%';
-
-            try {
-                const mergedPdf = await PDFLib.PDFDocument.create();
-                
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const fileBytes = await file.arrayBuffer();
-                    const pdf = await PDFLib.PDFDocument.load(fileBytes);
-                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                    copiedPages.forEach(page => mergedPdf.addPage(page));
-
-                    // Update progress bar
-                    progressBar.style.width = `${((i + 1) / files.length) * 100}%`;
-                }
-
-                const mergedPdfBytes = await mergedPdf.save();
-                download(mergedPdfBytes, "merged.pdf", "application/pdf");
-            } catch (error) {
-                alert('An error occurred while merging the files.');
-                console.error(error);
-            } finally {
-                progressBar.style.display = 'none';
-            }
-        }
-
-        function download(blob, filename, mimeType) {
-            const blobUrl = URL.createObjectURL(new Blob([blob], { type: mimeType }));
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(blobUrl);
-        }
-    </script>
+    <!-- Feedback Area -->
+    <div class="ui segment">
+        <label class="ui label">
+            <i class="info circle icon"></i>
+            Status:
+        </label>
+        <div id="feedback" class="ui message"></div>
+    </div>
+    <div class="ui segment">
+        <label class="ui label">
+            <i class="list icon"></i>
+            File Processing Status:
+        </label>
+        <div id="file-feedback" class="ui list"></div>
+    </div>
+    <!-- Semantic UI JavaScript (Optional, for dynamic components) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script src="lib/pdf-merge.js"></script>
 </body>
 </html>
